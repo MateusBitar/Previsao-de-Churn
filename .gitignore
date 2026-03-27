@@ -1,0 +1,28 @@
+# Ambientes Virtuais (Conda/Pip)
+env/
+venv/
+.venv/
+.conda/
+Portfolio/
+
+# Python Cache e Arquivos Compilados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Configurações de IDEs (VS Code, etc)
+.vscode/
+.idea/
+
+# Arquivos de Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Dados Brutos
+# É uma boa prática não subir bases de dados locais para o GitHub
+*.csv
+*.xlsx
+*.parquet 
