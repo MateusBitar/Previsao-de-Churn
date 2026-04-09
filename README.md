@@ -52,7 +52,8 @@ Notebook: [`notebooks/01_eda.ipynb`](notebooks/01_eda.ipynb).
 
 1. Baixe `WA_Fn-UseC_-Telco-Customer-Churn.csv` no [dataset Telco Customer Churn (Kaggle)](https://www.kaggle.com/datasets/blastchar/telco-customer-churn).
 2. Coloque o arquivo na **raiz do projeto** ou na pasta **`notebooks/`**.
-3. Abra o `.ipynb` no Jupyter, VS Code ou Cursor e execute as células.
+3. Abra o `.ipynb` no Jupyter, VS Code ou Cursor e execute as células.  
+   *Se o kernel não achar o CSV* (diretório de trabalho diferente), coloque o arquivo na **raiz do repo** ou defina `TELCO_CSV_PATH` com o caminho completo do `.csv` (a primeira célula de código sobe até 20 pastas procurando o arquivo).
 
 ## 💻 Como rodar este projeto localmente
 
