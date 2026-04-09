@@ -86,5 +86,5 @@ Documento único de fechamento do repositório frente ao edital (substitui os ra
 ## Próximos passos (fora do código)
 
 1. **Apresentação ao vivo:** ensaiar narrativa (negócio → EDA → pipeline → métricas/recall → score → demo Streamlit com CSV de exemplo).  
-2. **Se a banca pedir `sklearn.Pipeline` formal:** encapsular o pré-processamento em `ColumnTransformer` + `Pipeline` e reutilizar no `app.py` (refatoração média).  
+2. **Se a banca pedir `sklearn.Pipeline` formal:** hoje a lógica está centralizada em `telco_preprocess.py`; dá para embrulhar em `ColumnTransformer` + `Pipeline` sem mudar regras (refatoração opcional).  
 3. **Opcional:** versionar ou não os `.joblib` no Git (hoje não estão no `.gitignore`; CSV já é ignorado).

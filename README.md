@@ -39,7 +39,7 @@ Focando na métrica de **Recall**, o modelo otimizado (XGBoost + SMOTE) consegui
 |---------|----------------|
 | Plano (antes do código) | [`PLANO.md`](PLANO.md) |
 | EDA em notebook | [`notebooks/01_eda.ipynb`](notebooks/01_eda.ipynb) (correlações adicionais em [`churn.py`](churn.py)) |
-| Pipeline de features (justificativa + código) | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) · preparação em [`churn.py`](churn.py) · inferência alinhada em [`app.py`](app.py) (`raw_to_model_matrix`) |
+| Pipeline de features (justificativa + código) | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) · módulo compartilhado [`telco_preprocess.py`](telco_preprocess.py) · treino [`churn.py`](churn.py) · inferência [`app.py`](app.py) |
 | Modelos comparados (≥2 abordagens) | [`churn.py`](churn.py) — Random Forest, RF+SMOTE, XGBoost+SMOTE |
 | Score de risco contínuo | Probabilidade `predict_proba` → `risk_score` / simulador no Streamlit |
 | Plataforma de inferência (CSV + UI) | [`app.py`](app.py) — abas Simulador e **Predição em lote (CSV)** |

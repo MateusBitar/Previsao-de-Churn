@@ -1,6 +1,8 @@
 import kagglehub
-import pandas as pd 
+import pandas as pd
 import matplotlib.pyplot as plt
+
+from telco_preprocess import preprocess_telco_raw
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -18,33 +20,8 @@ df = pd.read_csv(file_path)
 
 df.info()
 
-# Converter espaços vazios em NaN e depois para numérico
-df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
-
-df.dropna(subset=['TotalCharges'], inplace=True)
-
-if 'customerID' in df.columns:
-    df.drop(columns=['customerID'], inplace=True)
-
-# 1. Transformar o nosso Target (Churn) em 1 e 0 explicitamente
-df['Churn'] = df['Churn'].map({'Yes': 1, 'No': 0})
-df['gender'] = df['gender'].map({'Male': 1, 'Female': 0})
-
-
-# 2. Transformar as colunas puramente binárias (Yes / No)
-colunas_binarias = ['Partner', 'Dependents', 'PhoneService', 'PaperlessBilling']
-for col in colunas_binarias:
-    df[col] = df[col].map({'Yes': 1, 'No': 0})
-
-# Transformar o Gênero (Gender)
-
-# 3. One-Hot Encoding para categorias múltiplas
-# Usamos exclude=['number'] para pegar tudo que NÃO for número (ou seja, os textos restantes)
-# Isso evita qualquer conflito ou warning de versão do Pandas
-colunas_categoricas = df.select_dtypes(exclude=['number']).columns
-
-# Aplicamos o get_dummies (dtype=int garante que teremos 1 e 0 em vez de True/False)
-df = pd.get_dummies(df, columns=colunas_categoricas, drop_first=True, dtype=int)
+# Pré-processamento compartilhado com app.py (telco_preprocess)
+df = preprocess_telco_raw(df, inferencia=False)
 
 # 4. Checar como ficou a nossa base de dados
 print(f"Novo formato da base: {df.shape[0]} linhas e {df.shape[1]} colunas")

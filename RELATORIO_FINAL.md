@@ -33,9 +33,9 @@ Documento de encerramento do projeto: o que funcionou, o que não funcionou e pr
 2. **Alvo e binárias:** `Churn` e campos Yes/No (e gênero) mapeados a 0/1.
 3. **Categóricas restantes:** one-hot com `drop_first=True` para evitar redundância entre dummies.
 4. **Modelagem:** split temporalmente neutro (shuffle) 80/20; SMOTE **somente** em `X_train, y_train`.
-5. **Inferência:** mesmo encadeamento lógico de encoding + alinhamento de colunas ao artefato salvo.
+5. **Inferência:** o módulo `telco_preprocess.py` centraliza o mesmo encadeamento (`preprocess_telco_raw` + `align_to_training_columns` / `features_for_model`) usado no treino e no Streamlit.
 
-*Não foi aplicada padronização numérica global porque o modelo final é baseado em árvores, onde monotonicidade por escala linear não é requisito como em muitos modelos paramétricos.*
+*Não foi aplicada padronização numérica global porque o modelo final é baseado em árvores, onde monotonicidade por escala linear não é requisito como em muitos modelos paramétricos. Um `sklearn.Pipeline` formal pode encapsular essas etapas depois sem mudar a lógica.*
 
 ---
 

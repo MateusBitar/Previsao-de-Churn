@@ -7,52 +7,13 @@ import joblib
 import plotly.express as px
 import plotly.figure_factory as ff
 
+from telco_preprocess import COLUNAS_TELCO_OBRIGATORIAS, features_for_model
+
 APP_DIR = Path(__file__).resolve().parent
 PATH_MODELO = APP_DIR / "modelo_churn_xgboost.joblib"
 PATH_COLUNAS = APP_DIR / "colunas_treino.joblib"
 
 st.set_page_config(page_title="Previsão de Churn | Portfólio", page_icon="📊", layout="wide")
-
-# Colunas esperadas no CSV estilo Kaggle Telco (Churn e customerID opcionais)
-COLUNAS_TELCO_OBRIGATORIAS = [
-    "gender",
-    "SeniorCitizen",
-    "Partner",
-    "Dependents",
-    "tenure",
-    "PhoneService",
-    "MultipleLines",
-    "InternetService",
-    "OnlineSecurity",
-    "OnlineBackup",
-    "DeviceProtection",
-    "TechSupport",
-    "StreamingTV",
-    "StreamingMovies",
-    "Contract",
-    "PaperlessBilling",
-    "PaymentMethod",
-    "MonthlyCharges",
-    "TotalCharges",
-]
-
-
-def raw_to_model_matrix(df: pd.DataFrame, colunas_treino: list) -> pd.DataFrame:
-    """Espelha o pré-processamento de churn.py: retorna X alinhado às colunas do treino."""
-    df = df.copy()
-    if "Churn" in df.columns:
-        df = df.drop(columns=["Churn"])
-    df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce")
-    df = df.dropna(subset=["TotalCharges"])
-    if "customerID" in df.columns:
-        df = df.drop(columns=["customerID"])
-    df["gender"] = df["gender"].map({"Male": 1, "Female": 0})
-    colunas_binarias = ["Partner", "Dependents", "PhoneService", "PaperlessBilling"]
-    for col in colunas_binarias:
-        df[col] = df[col].map({"Yes": 1, "No": 0})
-    colunas_categoricas = df.select_dtypes(exclude=["number"]).columns
-    df = pd.get_dummies(df, columns=colunas_categoricas, drop_first=True, dtype=int)
-    return df.reindex(columns=colunas_treino, fill_value=0)
 
 
 # ==========================================
@@ -141,7 +102,7 @@ with tab1:
         }
         
         df_novo = pd.DataFrame([dados_novo_cliente])
-        X_in = raw_to_model_matrix(df_novo, colunas_treino)
+        X_in = features_for_model(df_novo, colunas_treino)
         if X_in.empty:
             st.error("Não foi possível montar as features para este cliente (dados inválidos).")
         else:
@@ -186,7 +147,7 @@ with tab2:
             else:
                 n_antes = len(raw)
                 ids_serie = raw["customerID"] if "customerID" in raw.columns else None
-                X_mat = raw_to_model_matrix(raw, colunas_treino)
+                X_mat = features_for_model(raw, colunas_treino)
                 n_depois = len(X_mat)
                 if n_depois == 0:
                     st.warning(
