@@ -59,7 +59,7 @@ Notebook: [`notebooks/01_eda.ipynb`](notebooks/01_eda.ipynb).
 
 ```bash
 # Clone este repositório
-git clone [https://github.com/seu-usuario/seu-repositorio.git](https://github.com/seu-usuario/seu-repositorio.git)
+git clone [git clone https://github.com/MateusBitar/Previsao-de-Churn.git](https://github.com/MateusBitar/Previsao-de-Churn.git)
 
 # Acesse a pasta do projeto
 cd seu-repositorio
