@@ -45,5 +45,13 @@ cd seu-repositorio
 # Instale as dependências
 pip install -r requirements.txt
 
+# Treine o modelo e gere os artefatos (modelo_churn_xgboost.joblib, colunas_treino.joblib)
+python churn.py
+
 # Execute a aplicação Streamlit
 streamlit run app.py
+```
+
+Na interface: use o **Simulador** ou a aba **Predição em lote (CSV)** com arquivo no formato [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) (colunas `customerID` e `Churn` opcionais). Saída: `churn_pred` e `risk_score` (probabilidade 0–1), com download do resultado.
+
+Documentação do desafio: `PLANO.md`, `RELATORIO_FINAL.md`.
