@@ -33,6 +33,14 @@ Focando na métrica de **Recall**, o modelo otimizado (XGBoost + SMOTE) consegui
 * **Visualização:** Matplotlib, Seaborn, Plotly
 * **Deploy & Web App:** Streamlit, Joblib
 
+## 📓 Análise exploratória (EDA)
+
+Notebook: [`notebooks/01_eda.ipynb`](notebooks/01_eda.ipynb).
+
+1. Baixe `WA_Fn-UseC_-Telco-Customer-Churn.csv` no [dataset Telco Customer Churn (Kaggle)](https://www.kaggle.com/datasets/blastchar/telco-customer-churn).
+2. Coloque o arquivo na **raiz do projeto** ou na pasta **`notebooks/`**.
+3. Abra o `.ipynb` no Jupyter, VS Code ou Cursor e execute as células.
+
 ## 💻 Como rodar este projeto localmente
 
 ```bash
@@ -54,4 +62,4 @@ streamlit run app.py
 
 Na interface: use o **Simulador** ou a aba **Predição em lote (CSV)** com arquivo no formato [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) (colunas `customerID` e `Churn` opcionais). Saída: `churn_pred` e `risk_score` (probabilidade 0–1), com download do resultado.
 
-Documentação do desafio: `PLANO.md`, `RELATORIO_FINAL.md`.
+Documentação do desafio: `PLANO.md`, `RELATORIO_FINAL.md`. EDA: `notebooks/01_eda.ipynb`.

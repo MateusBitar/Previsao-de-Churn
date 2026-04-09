@@ -23,7 +23,7 @@ Documento de encerramento do projeto: o que funcionou, o que não funcionou e pr
 - **Calibração de probabilidades:** o score é a saída bruta do XGBoost; **não foi verificada calibração** (curvas de calibração, Brier score, isotônica/Platt). O percentual é útil para **ordenação** de risco, mas “72%” não foi validado como frequência real de churn nessa faixa.
 - **Overfitting / generalização:** não há relatório sistemático **treino vs teste** (gap de métricas) no repositório; árvores profundas e SMOTE podem, em bases menores, empurrar métricas de treino — ponto a explicitar em apresentação e a reforçar com validação mais rígida depois.
 - **Interpretabilidade vs caixa-preta:** XGBoost é mais forte que um modelo linear, porém **menos transparente** que regressão logística com coeficientes diretos; a explicação ficou centrada em importância de features, não em efeitos marginais isolados.
-- **EDA principalmente em script:** a exploração rica (distribuições por churn, cruzamentos categóricos) poderia estar **centralizada em notebook** para o fluxo do desafio; parte da análise está concentrada em correlações e no texto do app/README.
+- **EDA em dois lugares:** o notebook `notebooks/01_eda.ipynb` cobre distribuição do alvo e gráficos-chave; o script `churn.py` ainda concentra correlações e treino — dá para unificar mais adiante se quiser um único fluxo.
 
 ---
 
