@@ -1,7 +1,18 @@
+# App (inferência)
 streamlit
+plotly
+
+# Dados e utilitários
 pandas
 numpy
 joblib
-xgboost
+kagglehub
+
+# Modelagem
 scikit-learn
-plotly
+xgboost
+imbalanced-learn
+
+# Treino e EDA (churn.py)
+matplotlib
+seaborn
