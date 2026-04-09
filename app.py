@@ -1,17 +1,62 @@
+import io
+
 import streamlit as st
 import pandas as pd
 import joblib
 import plotly.express as px
 import plotly.figure_factory as ff
 
+# Colunas esperadas no CSV estilo Kaggle Telco (Churn e customerID opcionais)
+COLUNAS_TELCO_OBRIGATORIAS = [
+    "gender",
+    "SeniorCitizen",
+    "Partner",
+    "Dependents",
+    "tenure",
+    "PhoneService",
+    "MultipleLines",
+    "InternetService",
+    "OnlineSecurity",
+    "OnlineBackup",
+    "DeviceProtection",
+    "TechSupport",
+    "StreamingTV",
+    "StreamingMovies",
+    "Contract",
+    "PaperlessBilling",
+    "PaymentMethod",
+    "MonthlyCharges",
+    "TotalCharges",
+]
+
+
+def raw_to_model_matrix(df: pd.DataFrame, colunas_treino: list) -> pd.DataFrame:
+    """Espelha o pré-processamento de churn.py: retorna X alinhado às colunas do treino."""
+    df = df.copy()
+    if "Churn" in df.columns:
+        df = df.drop(columns=["Churn"])
+    df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce")
+    df = df.dropna(subset=["TotalCharges"])
+    if "customerID" in df.columns:
+        df = df.drop(columns=["customerID"])
+    df["gender"] = df["gender"].map({"Male": 1, "Female": 0})
+    colunas_binarias = ["Partner", "Dependents", "PhoneService", "PaperlessBilling"]
+    for col in colunas_binarias:
+        df[col] = df[col].map({"Yes": 1, "No": 0})
+    colunas_categoricas = df.select_dtypes(exclude=["number"]).columns
+    df = pd.get_dummies(df, columns=colunas_categoricas, drop_first=True, dtype=int)
+    return df.reindex(columns=colunas_treino, fill_value=0)
+
+
 # ==========================================
 # 1. CARREGAMENTO DO MODELO
 # ==========================================
 @st.cache_resource
 def load_model():
-    modelo = joblib.load('modelo_churn_xgboost.joblib')
-    colunas = joblib.load('colunas_treino.joblib')
+    modelo = joblib.load("modelo_churn_xgboost.joblib")
+    colunas = joblib.load("colunas_treino.joblib")
     return modelo, colunas
+
 
 modelo, colunas_treino = load_model()
 
@@ -23,7 +68,14 @@ st.title("📊 Retenção Inteligente: Previsão de Churn")
 st.write("Um aplicativo de Machine Learning de ponta a ponta para identificar evasão de clientes.")
 
 # Criando as Abas da aplicação
-tab1, tab2, tab3 = st.tabs(["🔮 Simulador de Risco", "📈 Insights do Negócio", "🧠 Bastidores da IA (Tech)"])
+tab1, tab2, tab3, tab4 = st.tabs(
+    [
+        "🔮 Simulador de Risco",
+        "📁 Predição em lote (CSV)",
+        "📈 Insights do Negócio",
+        "🧠 Bastidores da IA (Tech)",
+    ]
+)
 
 # ==========================================
 # ABA 1: O SIMULADOR
@@ -54,29 +106,99 @@ with tab1:
         }
         
         df_novo = pd.DataFrame([dados_novo_cliente])
-        df_novo['gender'] = df_novo['gender'].map({'Male': 1, 'Female': 0})
-        colunas_binarias = ['Partner', 'Dependents', 'PhoneService', 'PaperlessBilling']
-        for col in colunas_binarias:
-            df_novo[col] = df_novo[col].map({'Yes': 1, 'No': 0})
-        
-        colunas_categoricas = df_novo.select_dtypes(exclude=['number']).columns
-        df_novo = pd.get_dummies(df_novo, columns=colunas_categoricas, drop_first=True, dtype=int)
-        df_novo = df_novo.reindex(columns=colunas_treino, fill_value=0)
-        
-        previsao = modelo.predict(df_novo)[0]
-        probabilidade = modelo.predict_proba(df_novo)[0][1] * 100
-        
-        st.divider()
-        if previsao == 1:
-            st.error(f"🚨 **ALTO RISCO DE CHURN!** Probabilidade: {probabilidade:.1f}%.")
-            st.warning("Ação sugerida: Entrar em contato com o cliente com uma oferta de retenção.")
+        X_in = raw_to_model_matrix(df_novo, colunas_treino)
+        if X_in.empty:
+            st.error("Não foi possível montar as features para este cliente (dados inválidos).")
         else:
-            st.success(f"✅ **CLIENTE SEGURO.** Probabilidade de cancelamento: {probabilidade:.1f}%.")
+            previsao = modelo.predict(X_in)[0]
+            probabilidade = modelo.predict_proba(X_in)[0][1] * 100
+            st.divider()
+            if previsao == 1:
+                st.error(f"🚨 **ALTO RISCO DE CHURN!** Probabilidade: {probabilidade:.1f}%.")
+                st.warning("Ação sugerida: Entrar em contato com o cliente com uma oferta de retenção.")
+            else:
+                st.success(f"✅ **CLIENTE SEGURO.** Probabilidade de cancelamento: {probabilidade:.1f}%.")
 
 # ==========================================
-# ABA 2: INSIGHTS DO NEGÓCIO
+# ABA 2: PREDIÇÃO EM LOTE (CSV)
 # ==========================================
 with tab2:
+    st.header("Upload de clientes (CSV)")
+    st.write(
+        "Envie um arquivo no formato **Telco Customer Churn** (Kaggle). "
+        "Colunas obrigatórias alinhadas ao dataset original; `customerID` e `Churn` são opcionais "
+        "(se `Churn` existir, é ignorado na predição)."
+    )
+    st.caption(
+        "Referência: [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn)"
+    )
+
+    arquivo = st.file_uploader("Arquivo CSV", type=["csv"])
+
+    if arquivo is not None:
+        try:
+            raw = pd.read_csv(arquivo)
+        except Exception as e:
+            st.error(f"Não foi possível ler o CSV: {e}")
+        else:
+            faltando = [c for c in COLUNAS_TELCO_OBRIGATORIAS if c not in raw.columns]
+            if faltando:
+                st.error(
+                    "Faltam colunas obrigatórias no CSV: **"
+                    + "**, **".join(faltando)
+                    + "**. Use o mesmo esquema do dataset Telco."
+                )
+            else:
+                n_antes = len(raw)
+                ids_serie = raw["customerID"] if "customerID" in raw.columns else None
+                X_mat = raw_to_model_matrix(raw, colunas_treino)
+                n_depois = len(X_mat)
+                if n_depois == 0:
+                    st.warning(
+                        "Nenhuma linha válida após limpeza (verifique `TotalCharges` numérico e valores ausentes)."
+                    )
+                else:
+                    if n_antes > n_depois:
+                        st.info(
+                            f"**{n_antes - n_depois}** linha(s) removida(s) por `TotalCharges` inválido ou ausente "
+                            f"(mesma regra do treino). **{n_depois}** linha(s) scoring."
+                        )
+                    churn_pred = modelo.predict(X_mat)
+                    risk_score = modelo.predict_proba(X_mat)[:, 1]
+                    out = pd.DataFrame(
+                        {
+                            "churn_pred": churn_pred.astype(int),
+                            "risk_score": risk_score,
+                        }
+                    )
+                    if ids_serie is not None:
+                        out.insert(0, "customerID", ids_serie.loc[X_mat.index].astype(str).values)
+                    else:
+                        out.insert(0, "row_index", X_mat.index.astype(int).values)
+
+                    st.subheader("Resultado")
+                    st.dataframe(
+                        out.assign(
+                            risk_score_pct=(out["risk_score"] * 100).round(2)
+                        ),
+                        use_container_width=True,
+                    )
+
+                    csv_buf = io.StringIO()
+                    out.assign(risk_score_pct=(out["risk_score"] * 100).round(2)).to_csv(
+                        csv_buf, index=False
+                    )
+                    st.download_button(
+                        label="Baixar resultado (CSV)",
+                        data=csv_buf.getvalue().encode("utf-8"),
+                        file_name="predicoes_churn.csv",
+                        mime="text/csv",
+                    )
+
+# ==========================================
+# ABA 3: INSIGHTS DO NEGÓCIO
+# ==========================================
+with tab3:
     st.header("O que faz o cliente cancelar?")
     st.write("Este é o 'Raio-X' do algoritmo XGBoost. As variáveis no topo são as que mais pesam na decisão matemática do modelo.")
     
@@ -103,9 +225,9 @@ with tab2:
     """)
 
 # ==========================================
-# ABA 3: BASTIDORES DA IA (Com Texto e Matrizes)
+# ABA 4: BASTIDORES DA IA (Com Texto e Matrizes)
 # ==========================================
-with tab3:
+with tab4:
     st.header("Engenharia do Modelo e Tomada de Decisão")
     st.write("Este projeto foi construído focando na **métrica de Recall**, garantindo que a empresa minimize o número de Falsos Negativos (clientes que cancelam sem o modelo perceber).")
     

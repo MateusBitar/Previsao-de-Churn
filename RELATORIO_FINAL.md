@@ -44,7 +44,7 @@ Documento de encerramento do projeto: o que funcionou, o que não funcionou e pr
 - **Validação:** k-fold estratificado e/ou repeated holdout para métricas mais estáveis; busca de hiperparâmetros documentada (optuna/random search).
 - **Threshold e custos:** definir cutoff por **custo esperado** de FP/FN ou orçamento de contatos da operação de retenção.
 - **Calibração e monitoramento:** calibrar probabilidades; em produção, **drift** de features e performance ao longo do tempo.
-- **Plataforma:** upload de **CSV em lote** na mesma engine de inferência; testes de schema na entrada.
+- **Plataforma:** testes automatizados de schema na entrada; filas/API para alto volume.
 - **Fairness e política de dados:** revisar uso de atributos sensíveis (ex.: `gender`) com critério de negócio e conformidade; documentar decisão de inclusão ou remoção.
 - **Features de domínio:** variáveis derivadas (ex.: relação charge/tenure, flags de pacote) se o time de negócio validar hipóteses.
 - **Baseline interpretável:** regressão logística ou modelos lineares como referência de coeficientes, para contraste com XGBoost.
@@ -53,4 +53,4 @@ Documento de encerramento do projeto: o que funcionou, o que não funcionou e pr
 
 ## Conclusão
 
-O projeto cumpre o núcleo de um fluxo de ciência de dados aplicado a churn: dados públicos Telco, preparação explícita, **duas famílias de abordagem** (Random Forest e XGBoost) com camada de **balanceamento**, métricas alinhadas ao problema (**recall**), score contínuo via **probabilidade** e demonstração em **Streamlit**. As principais ressalvas são **validação estatística mais forte**, **trade-off precision/recall operacionalizado** e **evolução da interface** para inferência em lote, itens naturalmente priorizados em uma segunda iteração profissional.
+O projeto cumpre o núcleo de um fluxo de ciência de dados aplicado a churn: dados públicos Telco, preparação explícita, **duas famílias de abordagem** (Random Forest e XGBoost) com camada de **balanceamento**, métricas alinhadas ao problema (**recall**), score contínuo via **probabilidade** e demonstração em **Streamlit** (simulador e **predição em lote por upload de CSV** com `churn_pred` e `risk_score`). As principais ressalvas são **validação estatística mais forte** e **trade-off precision/recall operacionalizado**, itens naturalmente priorizados em uma segunda iteração profissional.
