@@ -18,10 +18,10 @@ Através da Análise Exploratória de Dados (EDA), identificamos os principais o
 ## ⚙️ Desenvolvimento e Arquitetura da Solução
 A solução foi arquitetada focando em automação de ponta a ponta, desde a limpeza dos dados brutos até o deploy do modelo em produção:
 
-1. **Engenharia e Limpeza de Dados:** Tratamento de inconsistências, tipagem forçada e conversão de variáveis categóricas utilizando *One-Hot Encoding*.
+1. **Engenharia e Limpeza de Dados:** Tratamento de inconsistências, tipagem forçada e *One-Hot Encoding*; a lógica compartilhada entre treino e inferência está em **`telco_preprocess.py`** (`preprocess_telco_raw`, `features_for_model`).
 2. **Balanceamento Sintético (SMOTE):** O dataset apresentava um forte desbalanceamento (muito mais clientes fiéis do que evasões). Para evitar que o algoritmo ignorasse a classe minoritária, implementei o SMOTE nos dados de treino, forçando a IA a mapear os padrões de cancelamento estruturalmente.
 3. **Modelagem Avançada:** O modelo baseline (Random Forest) obteve apenas 46% de detecção. Com a substituição do motor por **XGBoost (Extreme Gradient Boosting)** aliado aos dados balanceados, **o Recall saltou para 64%**.
-4. **Deploy Interativo:** O cérebro do modelo foi exportado via `joblib` e integrado a uma aplicação web interativa construída com **Streamlit** e **Plotly**, permitindo simulações em tempo real.
+4. **Deploy Interativo:** O modelo foi exportado via `joblib` e integrado a um app **Streamlit** com **Plotly**: simulador de cliente, **predição em lote por CSV** (`churn_pred`, `risk_score`), gráfico de importâncias e aba técnica com matrizes de confusão de referência.
 
 ## 🚀 Impacto Financeiro (O ROI do Modelo)
 Focando na métrica de **Recall**, o modelo otimizado (XGBoost + SMOTE) conseguiu detectar **39% a mais de clientes em risco real de cancelamento** comparado ao modelo base. Em um cenário real de negócios, isso significa centenas de assinaturas a mais que a equipe de atendimento pode tentar salvar todos os meses através de ofertas ou upgrades estratégicos.
@@ -70,10 +70,12 @@ pip install -r requirements.txt
 # Treine o modelo e gere os artefatos (modelo_churn_xgboost.joblib, colunas_treino.joblib)
 python churn.py
 
-# Execute a aplicação Streamlit
-streamlit run app.py
+# Execute a aplicação Streamlit (use o mesmo Python do pip install)
+python -m streamlit run app.py
 ```
 
-Na interface: use o **Simulador** ou a aba **Predição em lote (CSV)** com arquivo no formato [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) (colunas `customerID` e `Churn` opcionais). Saída: `churn_pred` e `risk_score` (probabilidade 0–1), com download do resultado.
+Na interface: use o **Simulador** ou a aba **Predição em lote (CSV)** com arquivo no formato [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) (colunas `customerID` e `Churn` opcionais). Saída: `churn_pred` e `risk_score` (probabilidade 0–1), com download do resultado. Os artefatos `.joblib` devem estar na **mesma pasta** que `app.py` (o app resolve o caminho automaticamente).
+
+Substitua o URL do `git clone` acima pelo repositório real quando publicar no GitHub.
 
 Documentação: `PLANO.md`, `RELATORIO_FINAL.md`, `plano_incremento.md`. EDA: `notebooks/01_eda.ipynb`.

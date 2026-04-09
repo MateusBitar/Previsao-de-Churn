@@ -11,7 +11,7 @@ Documento de encerramento do projeto: o que funcionou, o que não funcionou e pr
 - **Tratamento honesto do desbalanceamento:** **SMOTE** aplicado **apenas ao conjunto de treino**, preservando o teste com a proporção real de churn — evita otimismo artificial na avaliação.
 - **Comparação de abordagens:** baseline **Random Forest** com `class_weight='balanced'`; em seguida **RF + SMOTE**; modelo final **XGBoost + SMOTE**. Na narrativa documentada no app/README, o **recall** de cancelamentos subiu da ordem de **~46%** (baseline) para **~64%** (XGBoost + SMOTE), ampliando a capacidade de “pegar” evasões reais no holdout.
 - **Score de risco contínuo:** uso da **probabilidade estimada de churn** (`predict_proba`, classe positiva), exposta na interface como percentual — simples, interpretável e alinhada ao modelo escolhido.
-- **Reprodutibilidade na inferência:** persistência com `joblib` do modelo e da **lista ordenada de colunas** do treino; na predição, `reindex` com `fill_value=0` garante o mesmo esquema de features do treinamento.
+- **Reprodutibilidade na inferência:** persistência com `joblib` do modelo e da **lista ordenada de colunas** do treino; na predição, `telco_preprocess.features_for_model` aplica o mesmo pré-processamento do treino e **alinha colunas** (`reindex` com `fill_value=0`) ao artefato salvo.
 - **Interpretabilidade para negócio:** `feature_importances_` do XGBoost e texto no Streamlit conectam decisões do modelo a variáveis conhecidas (ex.: contrato mensal, fibra, `tenure`), em linha com a EDA.
 
 ---

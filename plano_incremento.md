@@ -15,6 +15,7 @@ Documento único de fechamento do repositório frente ao edital (substitui os ra
 | Prioridade 1 — relatório + `requirements.txt` | Feito |
 | Prioridade 2 — CSV em lote + README | Feito |
 | Prioridade 3 — notebook EDA + pipeline descrito no relatório | Feito |
+| **`telco_preprocess.py`** — pré-processamento único treino + app | Feito |
 | App — caminho absoluto para `.joblib`, erros claros | Feito |
 
 ---
