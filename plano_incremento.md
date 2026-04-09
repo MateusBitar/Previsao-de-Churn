@@ -8,6 +8,17 @@ Documento único de fechamento do repositório frente ao edital (substitui os ra
 
 ---
 
+## Status do repositório — entregas realizadas
+
+| Bloco | Situação |
+|--------|----------|
+| Prioridade 1 — relatório + `requirements.txt` | Feito |
+| Prioridade 2 — CSV em lote + README | Feito |
+| Prioridade 3 — notebook EDA + pipeline descrito no relatório | Feito |
+| App — caminho absoluto para `.joblib`, erros claros | Feito |
+
+---
+
 ## Prioridade 0 — Já coberto (não gastar tempo)
 
 - `PLANO.md` — leitura do problema, etapas, critérios.
@@ -63,9 +74,17 @@ Documento único de fechamento do repositório frente ao edital (substitui os ra
 
 ## Checklist antes de enviar / apresentar
 
-- [ ] `PLANO.md` no repositório  
-- [ ] `plano_incremento.md` (este arquivo) no repositório  
-- [ ] `RELATORIO_FINAL.md` preenchido  
-- [ ] `streamlit run app.py` sobe com `.joblib` na pasta do `app.py`  
-- [ ] README aponta o notebook `notebooks/01_eda.ipynb` (se usar EDA no notebook)  
-- [ ] Artefatos: `python churn.py` gera `modelo_churn_xgboost.joblib` e `colunas_treino.joblib`
+- [x] `PLANO.md` no repositório  
+- [x] `plano_incremento.md` (este arquivo) no repositório  
+- [x] `RELATORIO_FINAL.md` preenchido  
+- [x] `streamlit run app.py` sobe com `.joblib` na pasta do `app.py` (após `python churn.py`)  
+- [x] README aponta o notebook `notebooks/01_eda.ipynb`  
+- [x] Artefatos: `python churn.py` gera `modelo_churn_xgboost.joblib` e `colunas_treino.joblib`
+
+---
+
+## Próximos passos (fora do código)
+
+1. **Apresentação ao vivo:** ensaiar narrativa (negócio → EDA → pipeline → métricas/recall → score → demo Streamlit com CSV de exemplo).  
+2. **Se a banca pedir `sklearn.Pipeline` formal:** encapsular o pré-processamento em `ColumnTransformer` + `Pipeline` e reutilizar no `app.py` (refatoração média).  
+3. **Opcional:** versionar ou não os `.joblib` no Git (hoje não estão no `.gitignore`; CSV já é ignorado).

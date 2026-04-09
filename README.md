@@ -33,6 +33,19 @@ Focando na métrica de **Recall**, o modelo otimizado (XGBoost + SMOTE) consegui
 * **Visualização:** Matplotlib, Seaborn, Plotly
 * **Deploy & Web App:** Streamlit, Joblib
 
+## 📋 Mapa das entregas (desafio / processo seletivo)
+
+| Entrega | Onde encontrar |
+|---------|----------------|
+| Plano (antes do código) | [`PLANO.md`](PLANO.md) |
+| EDA em notebook | [`notebooks/01_eda.ipynb`](notebooks/01_eda.ipynb) (correlações adicionais em [`churn.py`](churn.py)) |
+| Pipeline de features (justificativa + código) | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) · preparação em [`churn.py`](churn.py) · inferência alinhada em [`app.py`](app.py) (`raw_to_model_matrix`) |
+| Modelos comparados (≥2 abordagens) | [`churn.py`](churn.py) — Random Forest, RF+SMOTE, XGBoost+SMOTE |
+| Score de risco contínuo | Probabilidade `predict_proba` → `risk_score` / simulador no Streamlit |
+| Plataforma de inferência (CSV + UI) | [`app.py`](app.py) — abas Simulador e **Predição em lote (CSV)** |
+| Relatório final | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) |
+| Plano de incremento / fechamento | [`plano_incremento.md`](plano_incremento.md) |
+
 ## 📓 Análise exploratória (EDA)
 
 Notebook: [`notebooks/01_eda.ipynb`](notebooks/01_eda.ipynb).
@@ -62,4 +75,4 @@ streamlit run app.py
 
 Na interface: use o **Simulador** ou a aba **Predição em lote (CSV)** com arquivo no formato [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) (colunas `customerID` e `Churn` opcionais). Saída: `churn_pred` e `risk_score` (probabilidade 0–1), com download do resultado.
 
-Documentação do desafio: `PLANO.md`, `RELATORIO_FINAL.md`. EDA: `notebooks/01_eda.ipynb`.
+Documentação: `PLANO.md`, `RELATORIO_FINAL.md`, `plano_incremento.md`. EDA: `notebooks/01_eda.ipynb`.
