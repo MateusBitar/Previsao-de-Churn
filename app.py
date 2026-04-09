@@ -1,10 +1,17 @@
 import io
+from pathlib import Path
 
 import streamlit as st
 import pandas as pd
 import joblib
 import plotly.express as px
 import plotly.figure_factory as ff
+
+APP_DIR = Path(__file__).resolve().parent
+PATH_MODELO = APP_DIR / "modelo_churn_xgboost.joblib"
+PATH_COLUNAS = APP_DIR / "colunas_treino.joblib"
+
+st.set_page_config(page_title="Previsão de Churn | Portfólio", page_icon="📊", layout="wide")
 
 # Colunas esperadas no CSV estilo Kaggle Telco (Churn e customerID opcionais)
 COLUNAS_TELCO_OBRIGATORIAS = [
@@ -53,17 +60,45 @@ def raw_to_model_matrix(df: pd.DataFrame, colunas_treino: list) -> pd.DataFrame:
 # ==========================================
 @st.cache_resource
 def load_model():
-    modelo = joblib.load("modelo_churn_xgboost.joblib")
-    colunas = joblib.load("colunas_treino.joblib")
+    """Carrega artefatos ao lado de app.py (independe do diretório de trabalho atual)."""
+    if not PATH_MODELO.is_file():
+        raise FileNotFoundError(str(PATH_MODELO))
+    if not PATH_COLUNAS.is_file():
+        raise FileNotFoundError(str(PATH_COLUNAS))
+    modelo = joblib.load(PATH_MODELO)
+    colunas = joblib.load(PATH_COLUNAS)
     return modelo, colunas
 
 
-modelo, colunas_treino = load_model()
+try:
+    modelo, colunas_treino = load_model()
+except FileNotFoundError as exc:
+    st.title("📊 Previsão de Churn")
+    st.error(
+        "**Artefatos do modelo não encontrados.** "
+        "Eles precisam estar na mesma pasta que `app.py`."
+    )
+    st.markdown(
+        f"- Esperado: `{PATH_MODELO.name}`\n"
+        f"- Esperado: `{PATH_COLUNAS.name}`\n\n"
+        "**Pasta do app:** `" + str(APP_DIR) + "`"
+    )
+    st.info(
+        "Gere os arquivos treinando o modelo (na pasta do projeto):\n\n"
+        "`python churn.py`"
+    )
+    st.stop()
+except Exception as exc:
+    st.title("📊 Previsão de Churn")
+    st.error(f"**Erro ao carregar o modelo:** `{type(exc).__name__}` — {exc}")
+    st.caption(
+        "Confira se as versões de Python, `xgboost` e `scikit-learn` são compatíveis com as usadas em `churn.py`."
+    )
+    st.stop()
 
 # ==========================================
-# 2. CONFIGURAÇÃO DA PÁGINA
+# 2. CABEÇALHO
 # ==========================================
-st.set_page_config(page_title="Previsão de Churn | Portfólio", page_icon="📊", layout="wide")
 st.title("📊 Retenção Inteligente: Previsão de Churn")
 st.write("Um aplicativo de Machine Learning de ponta a ponta para identificar evasão de clientes.")
 
